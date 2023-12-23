@@ -1,0 +1,115 @@
+1. Anagram
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+bool isAnagram(char* s, char* t) {    
+    if (strlen(s) != strlen(t)) {
+        return false;
+    }
+    int charCount[26] = {0};
+    for (int i = 0; s[i] != '\0'; i++) {
+        charCount[s[i] - 'a']++;
+    }
+    for (int i = 0; t[i] != '\0'; i++) {
+        charCount[t[i] - 'a']--;
+
+        if (charCount[t[i] - 'a'] < 0) {
+            return false;
+        }
+    }
+    return true;
+}
+int main() {
+    char s1[] = "anagram";
+    char t1[] = "nagaram";
+    printf("Example 1: %s\n", isAnagram(s1, t1) ? "true" : "false");
+    char s2[] = "rat";
+    char t2[] = "car";
+    printf("Example 2: %s\n", isAnagram(s2, t2) ? "true" : "false");
+    return 0;
+}
+2.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+char* longestCommonPrefix(char** strs, int strsSize) {  
+    if (strsSize == 0) {
+        char* result = (char*)malloc(1);
+        result[0] = '\0';
+        return result;
+    }
+    for (int i = 0; strs[0][i] != '\0'; i++) {   
+        for (int j = 1; j < strsSize; j++) {
+            if (strs[j][i] != strs[0][i] || strs[j][i] == '\0') {
+                
+                char* result = (char*)malloc(i + 1);
+                strncpy(result, strs[0], i);
+                result[i] = '\0';
+                return result;
+            }
+        }
+    }
+    return strdup(strs[0]);
+}
+int main() {  
+    char* strs1[] = {"flower", "flow", "flight"};
+    int size1 = sizeof(strs1) / sizeof(strs1[0]);
+    printf("Example 1: %s\n", longestCommonPrefix(strs1, size1));
+    char* strs2[] = {"dog", "racecar", "car"};
+    int size2 = sizeof(strs2) / sizeof(strs2[0]);
+    printf("Example 2: %s\n", longestCommonPrefix(strs2, size2));
+    return 0;
+}
+
+3.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+const char* digitToLetters[] = {
+    "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"
+};
+void generateCombinations(char* digits, int index, char* current, char** result, int* resultSize) {
+    if (digits[index] == '\0') {
+        result[*resultSize] = strdup(current);
+        (*resultSize)++;
+        return;
+    }
+    const char* letters = digitToLetters[digits[index] - '0'];
+    for (int i = 0; letters[i] != '\0'; i++) {
+        current[index] = letters[i];
+        generateCombinations(digits, index + 1, current, result, resultSize);
+    }
+}
+char** letterCombinations(char* digits, int* returnSize) {
+    if (digits == NULL || digits[0] == '\0') {
+        *returnSize = 0;
+        return NULL;
+    }
+    int numCombinations = 1;
+    for (int i = 0; digits[i] != '\0'; i++) {
+        numCombinations *= strlen(digitToLetters[digits[i] - '0']);
+    }
+    char** result = (char**)malloc(numCombinations * sizeof(char*));
+    *returnSize = 0;
+    char* current = (char*)malloc(strlen(digits) + 1);
+    generateCombinations(digits, 0, current, result, returnSize);
+    free(current);
+    return result;
+}
+
+int main() {
+    
+    char digits[] = "23";
+    int size;
+    char** result = letterCombinations(digits, &size);
+
+    printf("Example: Letter Combinations for %s:\n", digits);
+    for (int i = 0; i < size; i++) {
+        printf("%s\n", result[i]);
+        free(result[i]);
+    }
+    free(result);
+    return 0;
+}
+
